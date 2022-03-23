@@ -108,7 +108,6 @@ public class AssignmentTest {
         } catch (Exception ex) {
             System.out.print(ex.getMessage());
         }
-
     }
 
     void createaccount() {
@@ -134,7 +133,6 @@ public class AssignmentTest {
         } catch (Exception ex) {
             System.out.print(ex.getMessage());
         }
-
     }
 
     public static void main(String[] args) {

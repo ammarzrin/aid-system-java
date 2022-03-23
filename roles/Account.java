@@ -1,8 +1,6 @@
 package roles;
 // User authentication methods are stored here, applicable to both NGO and Donor users.
 
-import java.util.Scanner;
-
 public abstract class Account {
     private String username;
     private String password;

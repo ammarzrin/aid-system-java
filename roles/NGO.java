@@ -9,7 +9,7 @@ public class NGO extends Account {
     public NGO() {
     }
 
-    public NGO(String username, String password, String name, int manpower) {
+    public NGO(String username, String password, String ngoname, int manpower) {
         super(username, password);
         this.ngoname = ngoname;
         this.manpower = manpower;
@@ -21,6 +21,14 @@ public class NGO extends Account {
 
     public void setManpower(int manpower) {
         this.manpower = manpower;
+    }
+
+    public String getNGO() {
+        return this.ngoname;
+    }
+
+    public int getManpower() {
+        return this.manpower;
     }
 
     public void menu() {
