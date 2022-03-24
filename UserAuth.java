@@ -129,11 +129,4 @@ public class UserAuth {
             System.out.print(ex.getMessage());
         }
     }
-
-}
-
-class TestUserAuth {
-    public static void main(String[] args) {
-        new UserAuth();
-    }
 }
