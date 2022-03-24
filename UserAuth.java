@@ -81,7 +81,7 @@ public class UserAuth {
     void donorRegister() {
         try {
             Donor d = new Donor();
-            OutputStream output = new BufferedOutputStream(new FileOutputStream("userdata/donors.csv"));
+            OutputStream output = new BufferedOutputStream(new FileOutputStream("userdata/donors.csv", true));
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
             System.out.println("--- Login Credentials --- ");
             System.out.print("Enter a username: ");
@@ -107,7 +107,7 @@ public class UserAuth {
     void ngoRegister() {
         try {
             NGO n = new NGO();
-            OutputStream output = new BufferedOutputStream(new FileOutputStream("userdata/ngos.csv"));
+            OutputStream output = new BufferedOutputStream(new FileOutputStream("userdata/ngos.csv", true));
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
             System.out.println("--- Login Credentials --- ");
             System.out.print("Enter a username: ");
