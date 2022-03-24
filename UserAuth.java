@@ -3,11 +3,17 @@
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
+import roles.Account;
 import roles.Donor;
 import roles.NGO;
 
@@ -52,7 +58,6 @@ public class UserAuth {
     }
 
     void createAccount() {
-        System.out.println("Register page is displayed.");
         System.out.println("Create an account!");
         System.out.println("Are you here to donate or to represent an NGO?");
         System.out.println("I am a...");
@@ -111,6 +116,7 @@ public class UserAuth {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
             System.out.println("--- Login Credentials --- ");
             System.out.print("Enter a username: ");
+            checkUsername();
             n.setUsername(input.next());
             System.out.print("Enter a password: ");
             n.setPassword(input.next());
@@ -128,5 +134,32 @@ public class UserAuth {
         } catch (Exception ex) {
             System.out.print(ex.getMessage());
         }
+    }
+
+    void checkUsername() throws IOException {
+        // Check uniqueness of username.
+        ArrayList<String> users = readUsernames();
+        System.out.print(users);
+
+    }
+
+    private static ArrayList<String> readUsernames() throws IOException {
+        ArrayList<String> users = new ArrayList<>();
+        // read students.csv into a list of lines.
+        List<String> donors = Files.readAllLines(Paths.get("userdata/donors.csv"));
+        for (int i = 0; i < donors.size(); i++) {
+            // split a line by comma
+            String[] items = donors.get(i).split(",");
+            // items[0] is username
+            users.add(items[0]);
+        }
+        List<String> ngos = Files.readAllLines(Paths.get("userdata/ngos.csv"));
+        for (int i = 0; i < ngos.size(); i++) {
+            // split a line by comma
+            String[] items = ngos.get(i).split(",");
+            // items[0] is username
+            users.add(items[0]);
+        }
+        return users;
     }
 }
