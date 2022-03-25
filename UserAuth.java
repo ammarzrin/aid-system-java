@@ -3,11 +3,17 @@
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
+import roles.Account;
 import roles.Donor;
 import roles.NGO;
 
@@ -52,7 +58,6 @@ public class UserAuth {
     }
 
     void createAccount() {
-        System.out.println("Register page is displayed.");
         System.out.println("Create an account!");
         System.out.println("Are you here to donate or to represent an NGO?");
         System.out.println("I am a...");
@@ -85,7 +90,7 @@ public class UserAuth {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
             System.out.println("--- Login Credentials --- ");
             System.out.print("Enter a username: ");
-            d.setUsername(input.next());
+            checkUsername(input.next(), d);
             System.out.print("Enter a password: ");
             d.setPassword(input.next());
             System.out.println("--- Personal Details --- ");
@@ -111,7 +116,8 @@ public class UserAuth {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
             System.out.println("--- Login Credentials --- ");
             System.out.print("Enter a username: ");
-            n.setUsername(input.next());
+            checkUsername(input.next(), n);
+            // n.setUsername(input.next());
             System.out.print("Enter a password: ");
             n.setPassword(input.next());
             System.out.println("--- Personal Details --- ");
@@ -128,5 +134,48 @@ public class UserAuth {
         } catch (Exception ex) {
             System.out.print(ex.getMessage());
         }
+    }
+
+    private void checkUsername(String username, Account role) throws IOException {
+        // Check uniqueness of username.
+        ArrayList<String> users = readUsernames();
+        boolean takenUser = false;
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).equals(username)) {
+                takenUser = true;
+                break;
+            } else {
+                takenUser = false;
+            }
+        }
+        if (takenUser) {
+            System.out.println("Username is already taken!");
+            System.out.print("Enter a new username: ");
+            checkUsername(input.next(), role);
+        } else {
+            System.out.println("Good to go!");
+            role.setUsername(username);
+        }
+
+    }
+
+    private static ArrayList<String> readUsernames() throws IOException {
+        ArrayList<String> users = new ArrayList<>();
+        // read donors.csv into a list of lines.
+        List<String> donors = Files.readAllLines(Paths.get("userdata/donors.csv"));
+        // init at 1 to ignore column name
+        for (int i = 1; i < donors.size(); i++) {
+            // split a line by comma
+            String[] items = donors.get(i).split(",");
+            // items[0] is username
+            users.add(items[0]);
+        }
+        // read ngos.csv into a list of lines.
+        List<String> ngos = Files.readAllLines(Paths.get("userdata/ngos.csv"));
+        for (int i = 1; i < ngos.size(); i++) {
+            String[] items = ngos.get(i).split(",");
+            users.add(items[0]);
+        }
+        return users;
     }
 }
