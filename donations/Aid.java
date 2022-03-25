@@ -1,6 +1,10 @@
 package donations;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class Aid extends Donations {
@@ -81,4 +85,18 @@ public class Aid extends Donations {
             }
         }
     }
+
+    public static Queue<Aid> readAidFile() throws IOException {
+        Queue<Aid> aidList = new LinkedList<Aid>();
+        List<String> aids = Files.readAllLines(Paths.get("userdata/aids.csv"));
+        System.out.println("Array:");
+        for (String s : aids)
+            System.out.println(s);
+        for (int i = 0; i < aids.size(); i++) {
+            String[] items = aids.get(i).split(",");
+            aidList.add(new Aid(items[0], items[1], items[2], Integer.parseInt(items[3])));
+        }
+        return aidList;
+    }
+
 }

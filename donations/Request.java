@@ -1,6 +1,10 @@
 package donations;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class Request extends Donations {
@@ -90,4 +94,16 @@ public class Request extends Donations {
         }
     }
 
+    public static Queue<Request> readRequestFile() throws IOException {
+        Queue<Request> requestList = new LinkedList<Request>();
+        List<String> requests = Files.readAllLines(Paths.get("userdata/requests.csv"));
+        System.out.println("Array:");
+        for (String s : requests)
+            System.out.println(s);
+        for (int i = 0; i < requests.size(); i++) {
+            String[] items = requests.get(i).split(",");
+            requestList.add(new Request(items[0], items[1], Integer.parseInt(items[2]), Integer.parseInt(items[3])));
+        }
+        return requestList;
+    }
 }
