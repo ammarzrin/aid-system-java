@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import roles.Account;
 import roles.Donor;
@@ -37,6 +39,7 @@ public class UserAuth {
                 int choice = input.nextInt();
                 while (choice != 1 && choice != 2) {
                     System.out.println("Invalid input. Please enter 1 or 2.");
+                    System.out.print("Enter choice --> ");
                     choice = input.nextInt();
                 }
                 if (choice == 1) {
@@ -68,6 +71,7 @@ public class UserAuth {
             int choice = input.nextInt();
             while (choice != 1 && choice != 2) {
                 System.out.println("Invalid input. Please enter 1 or 2.");
+                System.out.print("Enter choice --> ");
                 choice = input.nextInt();
             }
             if (choice == 1) {
@@ -96,9 +100,8 @@ public class UserAuth {
             System.out.println("--- Personal Details --- ");
             System.out.print("Enter your name: ");
             d.setName(input.next());
-            System.out.print("Enter your phone number: ");
-            d.setPhone(input.next());
-
+            System.out.print("Enter your phone number (E.g. 012-3456789): ");
+            checkPhone(input.next(), d);
             writer.write(d.getUsername() + "," + d.getPassword() + "," + d.getName() + "," + d.getPhone());
             writer.newLine();
             System.out.println("New Donor account successfully created. Happy Donating!");
@@ -133,6 +136,22 @@ public class UserAuth {
             output.close();
         } catch (Exception ex) {
             System.out.print(ex.getMessage());
+        }
+    }
+
+    boolean phoneValid(String phone) {
+        Pattern p = Pattern.compile("^01\\d-\\d{7,8}$");
+        Matcher m = p.matcher(phone);
+        return (m.matches());
+    }
+
+    void checkPhone(String phonenum, Donor d) {
+        if (phoneValid(phonenum)) {
+            d.setPhone(phonenum);
+        } else {
+            System.out.println("Invalid phone number!");
+            System.out.print("Re-enter your phone number (E.g. 012-3456789): ");
+            checkPhone(input.next(), d);
         }
     }
 

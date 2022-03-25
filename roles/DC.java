@@ -4,3 +4,7 @@ package roles;
 
 public class DC {
 }
+
+class AidsCompleted {
+
+}
