@@ -86,11 +86,11 @@ public class UserAuth {
     void donorRegister() {
         try {
             Donor d = new Donor();
-            OutputStream output = new BufferedOutputStream(new FileOutputStream("userdata/donors.csv"));
+            OutputStream output = new BufferedOutputStream(new FileOutputStream("userdata/donors.csv", true));
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
             System.out.println("--- Login Credentials --- ");
             System.out.print("Enter a username: ");
-            d.setUsername(input.next());
+            checkUsername(input.next(), d);
             System.out.print("Enter a password: ");
             d.setPassword(input.next());
             System.out.println("--- Personal Details --- ");
@@ -112,12 +112,12 @@ public class UserAuth {
     void ngoRegister() {
         try {
             NGO n = new NGO();
-            OutputStream output = new BufferedOutputStream(new FileOutputStream("userdata/ngos.csv"));
+            OutputStream output = new BufferedOutputStream(new FileOutputStream("userdata/ngos.csv", true));
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
             System.out.println("--- Login Credentials --- ");
             System.out.print("Enter a username: ");
-            checkUsername();
-            n.setUsername(input.next());
+            checkUsername(input.next(), n);
+            // n.setUsername(input.next());
             System.out.print("Enter a password: ");
             n.setPassword(input.next());
             System.out.println("--- Personal Details --- ");
@@ -136,28 +136,44 @@ public class UserAuth {
         }
     }
 
-    void checkUsername() throws IOException {
+    private void checkUsername(String username, Account role) throws IOException {
         // Check uniqueness of username.
         ArrayList<String> users = readUsernames();
-        System.out.print(users);
+        boolean takenUser = false;
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).equals(username)) {
+                takenUser = true;
+                break;
+            } else {
+                takenUser = false;
+            }
+        }
+        if (takenUser) {
+            System.out.println("Username is already taken!");
+            System.out.print("Enter a new username: ");
+            checkUsername(input.next(), role);
+        } else {
+            System.out.println("Good to go!");
+            role.setUsername(username);
+        }
 
     }
 
     private static ArrayList<String> readUsernames() throws IOException {
         ArrayList<String> users = new ArrayList<>();
-        // read students.csv into a list of lines.
+        // read donors.csv into a list of lines.
         List<String> donors = Files.readAllLines(Paths.get("userdata/donors.csv"));
-        for (int i = 0; i < donors.size(); i++) {
+        // init at 1 to ignore column name
+        for (int i = 1; i < donors.size(); i++) {
             // split a line by comma
             String[] items = donors.get(i).split(",");
             // items[0] is username
             users.add(items[0]);
         }
+        // read ngos.csv into a list of lines.
         List<String> ngos = Files.readAllLines(Paths.get("userdata/ngos.csv"));
-        for (int i = 0; i < ngos.size(); i++) {
-            // split a line by comma
+        for (int i = 1; i < ngos.size(); i++) {
             String[] items = ngos.get(i).split(",");
-            // items[0] is username
             users.add(items[0]);
         }
         return users;
