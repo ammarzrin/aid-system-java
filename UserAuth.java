@@ -57,7 +57,64 @@ public class UserAuth {
     }
 
     void loginAccount() {
-        System.out.println("Login page is displayed.");
+        System.out.println("Login Page");
+        String username, password;
+        try {
+            System.out.print("Enter username: ");
+            username = input.next();
+            System.out.print("Enter password: ");
+            password = input.next();
+            checkLogin(username, password);
+        } catch (Exception ex) {
+            System.out.print(ex.getMessage());
+        }
+    }
+
+    void checkLogin(String username, String password) throws IOException {
+        ArrayList<String> loginCreds = readLoginCredentials();
+        boolean loginValid = false;
+        for (int i = 0; i < loginCreds.size(); i++) {
+            if (loginCreds.get(i).equals(username) && loginCreds.get(i).equals(password)) {
+                loginValid = true;
+                break;
+            } else {
+                loginValid = false;
+            }
+        }
+        if (loginValid) {
+            System.out.println("Welcome User!");
+        } else {
+            System.out.println("Invalid username or password.");
+            System.out.print("Enter username: ");
+            username = input.next();
+            System.out.print("Enter password: ");
+            password = input.next();
+            checkLogin(username, password);
+        }
+    }
+
+    private static ArrayList<String> readLoginCredentials() throws IOException {
+        ArrayList<String> loginCreds = new ArrayList<>();
+        // read donors.csv into a list of lines.
+        List<String> donors = Files.readAllLines(Paths.get("userdata/donors.csv"));
+        // init at 1 to ignore column name
+        for (int i = 1; i < donors.size(); i++) {
+            // split a line by comma
+            String[] items = donors.get(i).split(",");
+            // items[0] is username
+            loginCreds.add(items[0]);
+            loginCreds.add(items[1]);
+        }
+        System.out.println(loginCreds);
+        // read ngos.csv into a list of lines.
+        List<String> ngos = Files.readAllLines(Paths.get("userdata/ngos.csv"));
+        for (int i = 1; i < ngos.size(); i++) {
+            String[] items = ngos.get(i).split(",");
+            loginCreds.add(items[0]);
+            loginCreds.add(items[1]);
+        }
+        System.out.println(loginCreds);
+        return loginCreds;
     }
 
     void createAccount() {
@@ -175,7 +232,6 @@ public class UserAuth {
             System.out.println("Good to go!");
             role.setUsername(username);
         }
-
     }
 
     private static ArrayList<String> readUsernames() throws IOException {
