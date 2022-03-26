@@ -74,7 +74,7 @@ public class UserAuth {
         ArrayList<String> loginCreds = readLoginCredentials();
         boolean loginValid = false;
         for (int i = 0; i < loginCreds.size(); i++) {
-            if (loginCreds.get(i).equals(username) && loginCreds.get(i).equals(password)) {
+            if (loginCreds.get(i).equals(username) && loginCreds.get(i + 1).equals(password)) {
                 loginValid = true;
                 break;
             } else {
