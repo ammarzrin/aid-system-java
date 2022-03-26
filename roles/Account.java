@@ -28,10 +28,4 @@ public abstract class Account {
     public String getPassword() {
         return this.password;
     }
-
-    public abstract void menu();
-
-    public abstract void login();
-
-    public abstract void createAccount();
 }

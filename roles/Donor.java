@@ -31,12 +31,7 @@ public class Donor extends Account {
         return this.phone;
     }
 
-    public void menu() {
-    }
-
-    public void login() {
-    }
-
-    public void createAccount() {
+    public static void menu() {
+        System.out.println("Donor menu is displayed.");
     }
 }

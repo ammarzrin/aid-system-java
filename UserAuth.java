@@ -25,14 +25,15 @@ public class UserAuth {
 
     public UserAuth() {
         welcomePage();
+
     }
 
     void welcomePage() {
-        System.out.println("Welcome, user.");
+        System.out.println("Welcome to Aid Distribution System.");
         System.out.println("Select an option:");
         System.out.println("1. Log In");
         System.out.println("2. Create an Account");
-        boolean programRun = true;
+        boolean userAuth = false;
         do {
             try {
                 System.out.print("Enter choice --> ");
@@ -44,16 +45,16 @@ public class UserAuth {
                 }
                 if (choice == 1) {
                     loginAccount();
-                    programRun = false;
+                    userAuth = true;
                 } else if (choice == 2) {
                     createAccount();
-                    programRun = false;
+                    userAuth = true;
                 }
             } catch (InputMismatchException ex) {
                 System.out.println("Invalid input. Please enter an integer.");
                 input.next();
             }
-        } while (programRun == true);
+        } while (!userAuth);
     }
 
     void loginAccount() {
@@ -64,13 +65,19 @@ public class UserAuth {
             username = input.next();
             System.out.print("Enter password: ");
             password = input.next();
-            checkLogin(username, password);
+            if (checkLogin(username, password)) {
+                // If true = NGO, false = Donor
+                if (checkUserType(username) == 0) {
+                    Donor.menu();
+                } else
+                    NGO.menu();
+            }
         } catch (Exception ex) {
             System.out.print(ex.getMessage());
         }
     }
 
-    void checkLogin(String username, String password) throws IOException {
+    boolean checkLogin(String username, String password) throws IOException {
         ArrayList<String> loginCreds = readLoginCredentials();
         boolean loginValid = false;
         for (int i = 0; i < loginCreds.size(); i++) {
@@ -91,6 +98,41 @@ public class UserAuth {
             password = input.next();
             checkLogin(username, password);
         }
+        return true;
+    }
+
+    private static ArrayList<String> readUserTypes() throws IOException {
+        ArrayList<String> userTypes = new ArrayList<>();
+        // read donors.csv into a list of lines.
+        List<String> donors = Files.readAllLines(Paths.get("userdata/donors.csv"));
+        // init at 1 to ignore column name
+        for (int i = 1; i < donors.size(); i++) {
+            // split a line by comma
+            String[] items = donors.get(i).split(",");
+            // items[0] is username, items[4] is userType(1 = NGO or 0 = Donor).
+            userTypes.add(items[0]);
+            userTypes.add(items[4]);
+        }
+        // read ngos.csv into a list of lines.
+        List<String> ngos = Files.readAllLines(Paths.get("userdata/ngos.csv"));
+        for (int i = 1; i < ngos.size(); i++) {
+            String[] items = ngos.get(i).split(",");
+            userTypes.add(items[0]);
+            userTypes.add(items[4]);
+        }
+        return userTypes;
+    }
+
+    int checkUserType(String username) throws IOException {
+        ArrayList<String> userTypes = readUserTypes();
+        int currentUserType = 0;
+        for (int i = 0; i < userTypes.size(); i++) {
+            if (userTypes.get(i).equals(username)) {
+                currentUserType = Integer.parseInt(userTypes.get(i + 1));
+                break;
+            }
+        }
+        return currentUserType;
     }
 
     private static ArrayList<String> readLoginCredentials() throws IOException {
@@ -101,11 +143,10 @@ public class UserAuth {
         for (int i = 1; i < donors.size(); i++) {
             // split a line by comma
             String[] items = donors.get(i).split(",");
-            // items[0] is username
+            // items[0] is username, items [1] is password.
             loginCreds.add(items[0]);
             loginCreds.add(items[1]);
         }
-        System.out.println(loginCreds);
         // read ngos.csv into a list of lines.
         List<String> ngos = Files.readAllLines(Paths.get("userdata/ngos.csv"));
         for (int i = 1; i < ngos.size(); i++) {
@@ -113,7 +154,6 @@ public class UserAuth {
             loginCreds.add(items[0]);
             loginCreds.add(items[1]);
         }
-        System.out.println(loginCreds);
         return loginCreds;
     }
 
@@ -159,7 +199,7 @@ public class UserAuth {
             d.setName(input.next());
             System.out.print("Enter your phone number (E.g. 012-3456789): ");
             checkPhone(input.next(), d);
-            writer.write(d.getUsername() + "," + d.getPassword() + "," + d.getName() + "," + d.getPhone());
+            writer.write(d.getUsername() + "," + d.getPassword() + "," + d.getName() + "," + d.getPhone() + ",0");
             writer.newLine();
             System.out.println("New Donor account successfully created. Happy Donating!");
             writer.close();
@@ -186,7 +226,7 @@ public class UserAuth {
             System.out.print("Enter your NGO's manpower number: ");
             n.setManpower(input.nextInt());
 
-            writer.write(n.getUsername() + "," + n.getPassword() + "," + n.getNGO() + "," + n.getManpower());
+            writer.write(n.getUsername() + "," + n.getPassword() + "," + n.getNGO() + "," + n.getManpower() + ",1");
             writer.newLine();
             System.out.println("New NGO account successfully created. You can start requesting!");
             writer.close();

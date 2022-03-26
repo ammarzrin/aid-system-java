@@ -31,12 +31,7 @@ public class NGO extends Account {
         return this.manpower;
     }
 
-    public void menu() {
-    }
-
-    public void login() {
-    }
-
-    public void createAccount() {
+    public static void menu() {
+        System.out.println("NGO menu is displayed.");
     }
 }
