@@ -1,6 +1,9 @@
 package roles;
 // User authentication methods are stored here, applicable to both NGO and Donor users.
 
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
 public abstract class Account {
     private String username;
     private String password;
@@ -27,5 +30,35 @@ public abstract class Account {
 
     public String getPassword() {
         return this.password;
+    }
+
+    public static void displayHeader(String message) {
+        System.out.println();
+        int width = message.length() + 2;
+        StringBuilder sb = new StringBuilder();
+        sb.append("+");
+        for (int i = 0; i < width; ++i) {
+            sb.append("-");
+        }
+        sb.append("+");
+        System.out.println(sb.toString());
+        System.out.println("| " + message + " |");
+        System.out.println(sb.toString());
+    }
+
+    public static int getMenuInput() {
+        try (Scanner input = new Scanner(System.in)) {
+            int choice = 0;
+            do {
+                System.out.print("Enter choice --> ");
+                try {
+                    choice = input.nextInt();
+                } catch (InputMismatchException e) {
+                    System.out.println("Please enter an integer from 1 to 6.");
+                    input.nextInt();
+                }
+            } while (choice < 1 || choice > 6);
+            return choice;
+        }
     }
 }

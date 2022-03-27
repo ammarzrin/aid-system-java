@@ -32,6 +32,38 @@ public class NGO extends Account {
     }
 
     public static void menu() {
-        System.out.println("NGO menu is displayed.");
+        displayHeader("NGO Main Menu");
+        System.out.println("Select an option:");
+        System.out.println("1. Make a Request!");
+        System.out.println("2. View My Requests");
+        System.out.println("3. View Received Donations");
+        System.out.println("4. View All Donations");
+        System.out.println("5. Log Out");
+        System.out.println("6. Exit Program");
+        ngoActions(getMenuInput());
+    }
+
+    private static void ngoActions(int choice) {
+        switch (choice) {
+            case 1:
+                System.out.println("Let's make a request.");
+                break;
+            case 2:
+                System.out.println("What have I requested?");
+                break;
+            case 3:
+                System.out.println("What donations have my NGO received?");
+                break;
+            case 4:
+                System.out.println("Let's view all donations made so far.");
+                break;
+            case 5:
+                System.out.println("Log out!");
+                break;
+            case 6:
+                System.out.println("Exiting the program...");
+                System.exit(0);
+                break;
+        }
     }
 }
