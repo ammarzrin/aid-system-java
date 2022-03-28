@@ -6,21 +6,15 @@ import roles.NGO;
 // Main program. Run this.
 public class AidSystem {
     public static void main(String[] args) throws IOException {
-        new UserAuth();
-        boolean programRun = true;
-        int userType;
-        String username = "ammarzrin"; // need to take currentUser's username
-        do {
-            userType = UserAuth.checkUserType(username);
-            if (userType == 0) {
-                Donor.menu();
-                programRun = false;
-            } else { // userType == 1
-                NGO.menu();
-                programRun = false;
-            }
-        } while (programRun);
-        // after user login, do Donor currentUser = new Donor(currentUser details)
+        Donor userD = new Donor();
+        NGO userN = new NGO();
+        int userType = 0;
+        userType = UserAuth.welcomePage(userD, userN, userType);
+        if (userType == 0) {
+            Donor.menu(userD); // HELP!
+        } else { // userType == 1
+            NGO.menu(userN);
+        }
     }
 
     public static void displayHeader(String message) {

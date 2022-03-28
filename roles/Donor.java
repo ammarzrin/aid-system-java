@@ -31,7 +31,7 @@ public class Donor extends Account {
         return this.phone;
     }
 
-    public static void menu() {
+    public static void menu(Donor donor) {
         displayHeader("Donor Main Menu");
         System.out.println("Select an option:");
         System.out.println("1. Make a Donation!");
@@ -40,30 +40,46 @@ public class Donor extends Account {
         System.out.println("4. View All Donations");
         System.out.println("5. Log Out");
         System.out.println("6. Exit Program");
-        donorActions(getMenuInput());
+        donorActions(getMenuInput(), donor);
     }
 
-    private static void donorActions(int choice) {
+    private static void donorActions(int choice, Donor donor) {
         switch (choice) {
             case 1:
-                System.out.println("Let's make a donation.");
+                donatingForm(donor);
                 break;
             case 2:
-                System.out.println("What have I donated?");
+                viewPersonalDonations(donor);
                 break;
             case 3:
-                System.out.println("What are NGOs requesting?");
+                viewNGOrequests();
                 break;
             case 4:
-                System.out.println("Let's view all donations made so far.");
+                viewAllDonations();
                 break;
             case 5:
-                System.out.println("Log out!");
+                logout();
                 break;
             case 6:
                 System.out.println("Exiting the program...");
+                System.out.println("Goodbye!");
                 System.exit(0);
                 break;
         }
     }
+
+    private static void donatingForm(Donor donor) {
+        System.out.println("Let's make a donation.");
+    }
+
+    private static void viewPersonalDonations(Donor donor) {
+        System.out.println("What have I donated?");
+        System.out.println(donor.getName());
+
+    }
+
+    private static void viewNGOrequests() {
+        System.out.println("What are NGOs requesting?");
+    }
+
 }

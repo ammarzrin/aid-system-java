@@ -53,12 +53,23 @@ public abstract class Account {
                 System.out.print("Enter choice --> ");
                 try {
                     choice = input.nextInt();
+                    if (choice < 1 || choice > 6)
+                        System.out.println("Please enter an integer from 1 to 6.");
                 } catch (InputMismatchException e) {
-                    System.out.println("Please enter an integer from 1 to 6.");
+                    System.out.println("Please enter an integer!");
                     input.nextInt();
                 }
             } while (choice < 1 || choice > 6);
             return choice;
         }
+    }
+
+    public static boolean logout() {
+        System.out.println("Logging you out...");
+        return false;
+    }
+
+    public static void viewAllDonations() {
+        System.out.println("Let's view all donations made so far.");
     }
 }

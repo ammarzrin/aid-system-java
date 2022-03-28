@@ -31,7 +31,7 @@ public class NGO extends Account {
         return this.manpower;
     }
 
-    public static void menu() {
+    public static void menu(NGO ngo) {
         displayHeader("NGO Main Menu");
         System.out.println("Select an option:");
         System.out.println("1. Make a Request!");
@@ -40,30 +40,44 @@ public class NGO extends Account {
         System.out.println("4. View All Donations");
         System.out.println("5. Log Out");
         System.out.println("6. Exit Program");
-        ngoActions(getMenuInput());
+        ngoActions(getMenuInput(), ngo);
     }
 
-    private static void ngoActions(int choice) {
+    private static void ngoActions(int choice, NGO ngo) {
         switch (choice) {
             case 1:
-                System.out.println("Let's make a request.");
+                requestingForm(ngo);
                 break;
             case 2:
-                System.out.println("What have I requested?");
+                viewMyRequests(ngo);
                 break;
             case 3:
-                System.out.println("What donations have my NGO received?");
+                viewReceivedAids(ngo);
                 break;
             case 4:
-                System.out.println("Let's view all donations made so far.");
+                viewAllDonations();
                 break;
             case 5:
-                System.out.println("Log out!");
+                logout();
                 break;
             case 6:
                 System.out.println("Exiting the program...");
+                System.out.println("Goodbye!");
                 System.exit(0);
                 break;
         }
+    }
+
+    private static void requestingForm(NGO ngo) {
+        System.out.println("Let's make a request.");
+    }
+
+    private static void viewMyRequests(NGO ngo) {
+        System.out.println("What have I requested?");
+
+    }
+
+    private static void viewReceivedAids(NGO ngo) {
+        System.out.println("What donations have my NGO received?");
     }
 }

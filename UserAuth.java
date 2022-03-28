@@ -21,13 +21,13 @@ import roles.NGO;
 
 public class UserAuth {
 
-    Scanner input = new Scanner(System.in);
+    static Scanner input = new Scanner(System.in);
 
-    public UserAuth() {
-        welcomePage();
+    public UserAuth(Donor donor, NGO ngo, int type) {
+        type = welcomePage(donor, ngo, type);
     }
 
-    void welcomePage() {
+    public static int welcomePage(Donor donor, NGO ngo, int type) {
         AidSystem.displayHeader("Welcome!");
         boolean loggedIn = false;
         do {
@@ -43,7 +43,8 @@ public class UserAuth {
                     choice = input.nextInt();
                 }
                 if (choice == 1) {
-                    loggedIn = loginAccount();
+                    type = loginAccount(donor, ngo, type);
+                    loggedIn = true;
                 } else if (choice == 2) {
                     createAccount();
                     loggedIn = false;
@@ -53,15 +54,10 @@ public class UserAuth {
                 input.next();
             }
         } while (!loggedIn);
+        return type;
     }
 
-    // NEED HELP!
-    public void setCurrentUser(Account role) {
-        // ArrayList<Account> users = new ArrayList<>();
-    }
-
-    // NEED HELP!
-    public boolean loginAccount() {
+    public static int loginAccount(Donor donor, NGO ngo, int type) {
         AidSystem.displayHeader("User Login");
         String username, password;
         try {
@@ -69,30 +65,31 @@ public class UserAuth {
             username = input.next();
             System.out.print("Enter password: ");
             password = input.next();
-            checkLogin(username, password);
-            // if (checkLogin(username, password)) {
-            // // If checkUserType = 1 (NGO), 0 (Donor)
-            // if (checkUserType(username) == 0) { // After this if statement, user breaks
-            // out of
-            // // loop and considered as logged in.
-            // // need help getting this public & extracting user information
-            // // set public current user object here
-            // Donor currentUser = new Donor();
-            // } else { // checkUserType(username) == 1
-            // NGO currentUser = new NGO();
-            // }
-            // }
+            type = checkLogin(username, password, donor, ngo, type);
         } catch (Exception ex) {
             System.out.print(ex.getMessage());
         }
-        return true;
+        return type;
     }
 
-    public boolean checkLogin(String username, String password) throws IOException {
+    public static int checkLogin(String username, String password, Donor donor, NGO ngo, int type) throws IOException {
         ArrayList<String> loginCreds = readLoginCredentials();
         boolean loginValid = false;
         for (int i = 0; i < loginCreds.size(); i++) {
             if (loginCreds.get(i).equals(username) && loginCreds.get(i + 1).equals(password)) {
+                if (loginCreds.get(i).equals(username) && loginCreds.get(i + 4).equals("0")) {
+                    donor.setUsername(username);
+                    donor.setPassword(password);
+                    donor.setName(loginCreds.get(i + 2));
+                    donor.setPhone(loginCreds.get(i + 3));
+                    type = checkUserType(username);
+                } else if (loginCreds.get(i).equals(username) && loginCreds.get(i + 4).equals("1")) {
+                    ngo.setUsername(username);
+                    ngo.setPassword(password);
+                    ngo.setNGO(loginCreds.get(i + 2));
+                    ngo.setManpower(Integer.parseInt(loginCreds.get(i + 3)));
+                    type = checkUserType(username);
+                }
                 loginValid = true;
                 break;
             } else {
@@ -107,9 +104,9 @@ public class UserAuth {
             username = input.next();
             System.out.print("Enter password: ");
             password = input.next();
-            checkLogin(username, password);
+            checkLogin(username, password, donor, ngo, type);
         }
-        return true;
+        return type;
     }
 
     public static int checkUserType(String username) throws IOException {
@@ -151,18 +148,24 @@ public class UserAuth {
             String[] items = donors.get(i).split(","); // split line by comma
             loginCreds.add(items[0]); // username
             loginCreds.add(items[1]); // password
+            loginCreds.add(items[2]); // name
+            loginCreds.add(items[3]); // phone
+            loginCreds.add(items[4]); // donor(0) OR ngo(1)
         }
         // read ngos.csv into a list of lines.
         List<String> ngos = Files.readAllLines(Paths.get("userdata/ngos.csv"));
         for (int i = 1; i < ngos.size(); i++) {
             String[] items = ngos.get(i).split(",");
-            loginCreds.add(items[0]);
-            loginCreds.add(items[1]);
+            loginCreds.add(items[0]); // username
+            loginCreds.add(items[1]); // password
+            loginCreds.add(items[2]); // ngo
+            loginCreds.add(items[3]); // manpower
+            loginCreds.add(items[4]); // donor(0) OR ngo(1)
         }
         return loginCreds;
     }
 
-    private void createAccount() {
+    private static void createAccount() {
         AidSystem.displayHeader("New User Registration");
         System.out.println("Are you here to donate or to represent an NGO?");
         System.out.println("I am a...");
@@ -189,7 +192,7 @@ public class UserAuth {
         }
     }
 
-    private void donorRegister() {
+    private static void donorRegister() {
         try {
             Donor d = new Donor();
             OutputStream output = new BufferedOutputStream(new FileOutputStream("userdata/donors.csv", true));
@@ -218,7 +221,7 @@ public class UserAuth {
         }
     }
 
-    private void ngoRegister() {
+    private static void ngoRegister() {
         try {
             NGO n = new NGO();
             OutputStream output = new BufferedOutputStream(new FileOutputStream("userdata/ngos.csv", true));
@@ -245,13 +248,13 @@ public class UserAuth {
         }
     }
 
-    private boolean phoneValid(String phone) {
+    private static boolean phoneValid(String phone) {
         Pattern p = Pattern.compile("^01\\d-\\d{7,8}$"); // No. format must be 01x-xxxxxxxx
         Matcher m = p.matcher(phone);
         return (m.matches()); // returns boolean value, true means accepted.
     }
 
-    private void checkPhone(String phonenum, Donor d) {
+    private static void checkPhone(String phonenum, Donor d) {
         if (phoneValid(phonenum)) {
             d.setPhone(phonenum);
         } else {
@@ -261,7 +264,7 @@ public class UserAuth {
         }
     }
 
-    private void checkUsername(String username, Account role) throws IOException {
+    private static void checkUsername(String username, Account role) throws IOException {
         // Check uniqueness of username.
         ArrayList<String> users = readUsernames();
         boolean takenUser = false;
