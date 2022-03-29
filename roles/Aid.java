@@ -1,4 +1,4 @@
-package donations;
+package roles;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,10 +6,19 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
-public class Aid extends Donations {
-    public String name;
-    public String phone;
+public class Aid extends Donor {
+
+    public int quantity;
+    public String aid;
+
+    public Aid() {
+    }
 
     public Aid(String name, String phone, String aid, int quantity) {
         this.name = name;
@@ -22,12 +31,8 @@ public class Aid extends Donations {
         this.quantity = quantity;
     }
 
-    public String getDonorName() {
-        return name;
-    }
-
-    public String getPhone() {
-        return phone;
+    public void setAid(String aid) {
+        this.aid = aid;
     }
 
     public String getAid() {
@@ -39,7 +44,7 @@ public class Aid extends Donations {
     }
 
     public String toString() {
-        return "Donor: name = " + getDonorName() + ", Phone = " + getPhone() + ", aid = " + getAid() + ", quantity = "
+        return "Donor: name = " + getName() + ", Phone = " + getPhone() + ", aid = " + getAid() + ", quantity = "
                 + getQuantity();
     }
 
@@ -63,22 +68,22 @@ public class Aid extends Donations {
 
             if (index == 1) {
                 System.out.println("hihi");
-                aidCompleted.add(new AidsCompleted(aid.getDonorName(), aid.getPhone(), aid.getAid(),
-                        requestListTemp.peek().getngoName(), requestListTemp.peek().getQuantity(),
+                aidCompleted.add(new AidsCompleted(aid.getName(), aid.getPhone(), aid.getAid(),
+                        requestListTemp.peek().getNGO(), requestListTemp.peek().getQuantity(),
                         requestListTemp.peek().getManpower()));
                 aid.setQuantity(aid.getQuantity() - requestListTemp.peek().getQuantity());
                 requestListTemp.remove();
                 // code to remove the request from the list cause its finished
             } else if (index == -1) {
-                aidCompleted.add(new AidsCompleted(aid.getDonorName(), aid.getPhone(), aid.getAid(),
-                        requestListTemp.peek().getngoName(), aid.getQuantity(), requestListTemp.peek().getManpower()));
+                aidCompleted.add(new AidsCompleted(aid.getName(), aid.getPhone(), aid.getAid(),
+                        requestListTemp.peek().getNGO(), aid.getQuantity(), requestListTemp.peek().getManpower()));
                 requestListTemp.peek().setQuantity(requestListTemp.peek().getQuantity() - aid.getQuantity());
                 break;
                 // no remove request cause not done yet
             } else {
                 System.out.println("hoho");
-                aidCompleted.add(new AidsCompleted(aid.getDonorName(), aid.getPhone(), aid.getAid(),
-                        requestListTemp.peek().getngoName(), aid.getQuantity(), requestListTemp.peek().getManpower()));
+                aidCompleted.add(new AidsCompleted(aid.getName(), aid.getPhone(), aid.getAid(),
+                        requestListTemp.peek().getNGO(), aid.getQuantity(), requestListTemp.peek().getManpower()));
                 // remove request from the list
                 requestListTemp.remove();
                 break;
@@ -92,11 +97,27 @@ public class Aid extends Donations {
         System.out.println("Array:");
         for (String s : aids)
             System.out.println(s);
-        for (int i = 0; i < aids.size(); i++) {
+        for (int i = 1; i < aids.size(); i++) {
             String[] items = aids.get(i).split(",");
             aidList.add(new Aid(items[0], items[1], items[2], Integer.parseInt(items[3])));
         }
         return aidList;
+    }
+
+    public static void writeAidFile(Queue<Aid> aids) throws IOException {
+        OutputStream output = new BufferedOutputStream(new FileOutputStream("userdata/aids.csv", false));
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
+
+        writer.write("name" + "," + "phone" + "," + "aid" + "," + "quantity");
+        writer.newLine();
+
+        for (Aid a : aids) {
+            writer.write(a.getName() + "," + a.getPhone() + "," + a.getAid() + "," + a.getQuantity());
+            writer.newLine();
+        }
+
+        writer.close();
+        output.close();
     }
 
 }

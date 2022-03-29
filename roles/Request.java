@@ -1,4 +1,4 @@
-package donations;
+package roles;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,12 +7,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class Request extends Donations {
-    public String ngoName;
-    public int manpower;
+public class Request extends NGO {
+
+    public String aid;
+    public int quantity;
 
     public Request(String ngoName, String aid, int manpower, int quantity) {
-        this.ngoName = ngoName;
+        this.ngoname = ngoName;
         this.manpower = manpower;
         this.aid = aid;
         this.quantity = quantity;
@@ -20,14 +21,6 @@ public class Request extends Donations {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public String getngoName() {
-        return ngoName;
-    }
-
-    public int getManpower() {
-        return manpower;
     }
 
     public String getAid() {
@@ -39,7 +32,7 @@ public class Request extends Donations {
     }
 
     public String toString() {
-        return "ngoName :  name = " + getngoName() + ", Manpower = " + getManpower() + ", aid = " + getAid()
+        return "ngoName :  name = " + getNGO() + ", Manpower = " + getManpower() + ", aid = " + getAid()
                 + ", quantity = "
                 + getQuantity();
     }
@@ -47,7 +40,7 @@ public class Request extends Donations {
     public static void getrequestList(String aid, LinkedList<Request> requestList, Queue<Request> requestListTemp) {
         for (Request r : requestList) {
             if (aid.equals(r.getAid())) {
-                requestListTemp.offer(new Request(r.getngoName(), r.getAid(), r.getManpower(), r.getQuantity()));
+                requestListTemp.offer(new Request(r.getNGO(), r.getAid(), r.getManpower(), r.getQuantity()));
             }
         }
     }
@@ -73,20 +66,20 @@ public class Request extends Donations {
             if (index == 1) {
                 System.out.println("hihi");
                 req.setQuantity(req.getQuantity() - aidListTemp.peek().getQuantity());
-                aidCompleted.add(new AidsCompleted(aidListTemp.peek().getDonorName(), aidListTemp.peek().getPhone(),
-                        req.getAid(), req.getngoName(), req.getQuantity(), req.getManpower()));
+                aidCompleted.add(new AidsCompleted(aidListTemp.peek().getName(), aidListTemp.peek().getPhone(),
+                        req.getAid(), req.getNGO(), req.getQuantity(), req.getManpower()));
                 aidListTemp.remove();
                 // code to remove the request from the list cause its finished
             } else if (index == -1) {
-                aidCompleted.add(new AidsCompleted(aidListTemp.peek().getDonorName(), aidListTemp.peek().getPhone(),
-                        req.getAid(), req.getngoName(), req.getQuantity(), req.getManpower()));
+                aidCompleted.add(new AidsCompleted(aidListTemp.peek().getName(), aidListTemp.peek().getPhone(),
+                        req.getAid(), req.getNGO(), req.getQuantity(), req.getManpower()));
                 aidListTemp.peek().setQuantity(aidListTemp.peek().getQuantity() - req.getQuantity());
                 break;
                 // no remove request cause not done yet
             } else {
                 System.out.println("hoho");
-                aidCompleted.add(new AidsCompleted(aidListTemp.peek().getDonorName(), aidListTemp.peek().getPhone(),
-                        req.getAid(), req.getngoName(), req.getQuantity(), req.getManpower()));
+                aidCompleted.add(new AidsCompleted(aidListTemp.peek().getName(), aidListTemp.peek().getPhone(),
+                        req.getAid(), req.getNGO(), req.getQuantity(), req.getManpower()));
                 // remove request from the list
                 aidListTemp.remove();
                 break;
@@ -100,7 +93,7 @@ public class Request extends Donations {
         System.out.println("Array:");
         for (String s : requests)
             System.out.println(s);
-        for (int i = 0; i < requests.size(); i++) {
+        for (int i = 1; i < requests.size(); i++) {
             String[] items = requests.get(i).split(",");
             requestList.add(new Request(items[0], items[1], Integer.parseInt(items[2]), Integer.parseInt(items[3])));
         }

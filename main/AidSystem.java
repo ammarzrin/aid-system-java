@@ -1,19 +1,44 @@
-import java.io.IOException;
+package main;
 
+import java.io.IOException;
+import java.util.Queue;
+
+import javax.xml.namespace.QName;
+
+import roles.Aid;
 import roles.Donor;
 import roles.NGO;
+import roles.Request;
 
 // Main program. Run this.
 public class AidSystem {
     public static void main(String[] args) throws IOException {
         Donor userD = new Donor();
         NGO userN = new NGO();
-        int userType = 0;
+        int userType = -1;
+        int choice = 0;
+
         userType = UserAuth.welcomePage(userD, userN, userType);
         if (userType == 0) {
-            Donor.menu(userD); // HELP!
-        } else { // userType == 1
-            NGO.menu(userN);
+
+            Queue<Aid> aidList = Aid.readAidFile();
+            Queue<Request> requestList = Request.readRequestFile();
+
+            for (Aid s : aidList) {
+                System.out.println(s);
+            }
+            for (Request s : requestList) {
+                System.out.println(s);
+            }
+
+            Donor.menu(choice, userD);
+            System.out.println("hi im your mom");
+            System.out.println(choice);
+
+        } else if (userType == 1) { // userType == 1
+            do {
+                choice = NGO.menu(userN);
+            } while (choice != 5);
         }
     }
 

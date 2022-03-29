@@ -2,6 +2,8 @@
 // NGO role
 package roles;
 
+import java.util.Scanner;
+
 public class NGO extends Account {
     public String ngoname;
     public int manpower;
@@ -31,16 +33,19 @@ public class NGO extends Account {
         return this.manpower;
     }
 
-    public static void menu(NGO ngo) {
+    public static int menu(NGO ngo) {
+
         displayHeader("NGO Main Menu");
+        System.out.println("Hello, " + ngo.getNGO() + "!");
         System.out.println("Select an option:");
         System.out.println("1. Make a Request!");
         System.out.println("2. View My Requests");
         System.out.println("3. View Received Donations");
         System.out.println("4. View All Donations");
-        System.out.println("5. Log Out");
-        System.out.println("6. Exit Program");
-        ngoActions(getMenuInput(), ngo);
+        System.out.println("5. Exit Program");
+        int choice = getMenuInput();
+        ngoActions(choice, ngo);
+        return choice;
     }
 
     private static void ngoActions(int choice, NGO ngo) {
@@ -58,9 +63,6 @@ public class NGO extends Account {
                 viewAllDonations();
                 break;
             case 5:
-                logout();
-                break;
-            case 6:
                 System.out.println("Exiting the program...");
                 System.out.println("Goodbye!");
                 System.exit(0);

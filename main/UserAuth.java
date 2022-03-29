@@ -1,3 +1,4 @@
+package main;
 // Main program is run here.
 
 import java.io.IOException;
@@ -75,37 +76,38 @@ public class UserAuth {
     public static int checkLogin(String username, String password, Donor donor, NGO ngo, int type) throws IOException {
         ArrayList<String> loginCreds = readLoginCredentials();
         boolean loginValid = false;
-        for (int i = 0; i < loginCreds.size(); i++) {
-            if (loginCreds.get(i).equals(username) && loginCreds.get(i + 1).equals(password)) {
-                if (loginCreds.get(i).equals(username) && loginCreds.get(i + 4).equals("0")) {
-                    donor.setUsername(username);
-                    donor.setPassword(password);
-                    donor.setName(loginCreds.get(i + 2));
-                    donor.setPhone(loginCreds.get(i + 3));
-                    type = checkUserType(username);
-                } else if (loginCreds.get(i).equals(username) && loginCreds.get(i + 4).equals("1")) {
-                    ngo.setUsername(username);
-                    ngo.setPassword(password);
-                    ngo.setNGO(loginCreds.get(i + 2));
-                    ngo.setManpower(Integer.parseInt(loginCreds.get(i + 3)));
-                    type = checkUserType(username);
+        do {
+            for (int i = 0; i < loginCreds.size(); i++) {
+                if (loginCreds.get(i).equals(username) && loginCreds.get(i + 1).equals(password)) {
+                    if (loginCreds.get(i).equals(username) && checkUserType(username) == 0) {
+                        donor.setUsername(username);
+                        donor.setPassword(password);
+                        donor.setName(loginCreds.get(i + 2));
+                        donor.setPhone(loginCreds.get(i + 3));
+                        type = 0;
+                    } else if (loginCreds.get(i).equals(username) && checkUserType(username) == 1) {
+                        ngo.setUsername(username);
+                        ngo.setPassword(password);
+                        ngo.setNGO(loginCreds.get(i + 2));
+                        ngo.setManpower(Integer.parseInt(loginCreds.get(i + 3)));
+                        type = 1;
+                    }
+                    loginValid = true;
+                    break;
+                } else if (!loginCreds.get(i).equals(username) && !loginCreds.get(i + 1).equals(password)) {
+                    loginValid = false;
                 }
-                loginValid = true;
-                break;
-            } else {
-                loginValid = false;
             }
-        }
-        if (loginValid) {
-            System.out.println("Welcome, " + username + ".");
-        } else {
-            System.out.println("Invalid username or password.");
-            System.out.print("Enter username: ");
-            username = input.next();
-            System.out.print("Enter password: ");
-            password = input.next();
-            checkLogin(username, password, donor, ngo, type);
-        }
+            if (loginValid) {
+                System.out.println("Welcome, " + username + ".");
+            } else {
+                System.out.println("Invalid username or password.");
+                System.out.print("Enter username: ");
+                username = input.next();
+                System.out.print("Enter password: ");
+                password = input.next();
+            }
+        } while (!loginValid);
         return type;
     }
 
