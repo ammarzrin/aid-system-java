@@ -3,3 +3,26 @@ TASK DISTRIBUTION
 Member1 1191102915 MUHAMMAD AMMAR BIN MUHAMAD AZRIN - NGO
 Member2 1201100521 MUHAMMAD LUTFI BIN MOHD IZZAT - Distribution Center
 Member3 1201302166 MOHD FATIH FIKRI BIN MASIARA - Donor
+
+
+for ( AidsCompleted s : aidsCompletedList){
+    if ( currentUser.getUsername().equals(s.getDonor()) &&  aidQuery.equals(s.getAid()) && ngoQuery.equals(s.getngoName())){
+        System.out.println(s);
+    }
+}
+
+    // Donor currentUser = new Donor("Aliyah", "packing", "lutfi", "017-3923847");
+
+    //     Queue<Aid> n = new LinkedList<Aid>();
+
+    //     Queue<Aid> aidList  = Aid.readAidFile();
+
+    //     aidList.add( new Aid("Aliyah", "019-2837263", "biscuit", 20));
+
+
+    //     System.out.println("Array:");
+    //     for (Aid s : aidList)
+    //         System.out.println(s);
+
+    //     Aid.writeAidFile(aidList);
+  

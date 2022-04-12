@@ -1,5 +1,4 @@
 package main;
-// Main program is run here.
 
 import java.io.IOException;
 import java.io.BufferedOutputStream;

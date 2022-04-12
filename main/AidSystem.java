@@ -1,5 +1,7 @@
 package main;
 
+// main program is run here
+
 import java.io.IOException;
 import java.util.Queue;
 
@@ -32,7 +34,6 @@ public class AidSystem {
             }
 
             Donor.menu(choice, userD);
-            System.out.println("hi im your mom");
             System.out.println(choice);
 
         } else if (userType == 1) { // userType == 1

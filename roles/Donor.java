@@ -3,13 +3,9 @@
 package roles;
 
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.InputMismatchException;
+import java.util.Scanner;
+
 
 public class Donor extends Account {
     public String name;
@@ -56,7 +52,7 @@ public class Donor extends Account {
 
     }
 
-    private static void donorActions(int choice, Donor donor) {
+    public static void donorActions(int choice, Donor donor) {
         switch (choice) {
             case 1:
                 donatingForm(donor);
@@ -79,86 +75,90 @@ public class Donor extends Account {
         }
     }
 
-    private static void donatingForm(Donor donor) {
 
-        System.out.println("Let's make a donation.");
-        try {
-            Scanner keyboard = new Scanner(System.in);
-            ArrayList<String> itemData = new ArrayList<>();
-            Aid aid = new Aid();
-            int qty = 0;
-            boolean isExist = false;
-            String donate;
+public static void donatingForm(Donor donor) {
 
-            itemData.add("apple");
-            itemData.add("lemon");
-            itemData.add("orange");
-            itemData.add("babystuff");
-            itemData.add("toileteries");
-            itemData.add("towel");
-            itemData.add("blanket");
+    System.out.println("Let's make a donation.");
+    try {
+        Scanner input = new Scanner(System.in);
+        ArrayList<String> itemData = new ArrayList<>();
+        Aid aid = new Aid();
+        int qty = 0;
+        boolean isExist = false;
+        String donate;
 
-            System.out.println();
-            System.out.println("Enter ONE Item That You Want To Donate? :");
-            donate = keyboard.next();
+        itemData.add("apple");
+        itemData.add("lemon");
+        itemData.add("orange");
+        itemData.add("babystuff");
+        itemData.add("toileteries");
+        itemData.add("towel");
+        itemData.add("blanket");
 
-            try {
-                System.out.println("Enter Quantity: ");
-                qty = keyboard.nextInt();
-            } catch (InputMismatchException ex) {
-                System.out.println("Invalid input. Please enter an integer.");
-            }
-
-            if (isExist == itemData.contains(donate)) {
-                System.out.println("Item is neded,Donation Item successfully added. Thank you!");
-
-                aid.setAid(donate);
-                aid.setQuantity(qty);
-            } else
-                System.out.println("We dont need the item,sorry,please enter another item");
-            donatingForm(donor);
-
-            System.out.println();
-
-        } catch (Exception ex) {
-            System.out.print(ex.getMessage());
-        }
         System.out.println();
-        boolean programRun = true;
-        do {
-            try {
-                System.out.println("Do You Want To Donate Another Item? :");
-                System.out.println("(1) Yes");
-                System.out.println("(2) No");
+        System.out.println("Enter ONE Item That You Want To Donate? :");
 
-                int choice = keyboard.nextInt();
-                while (choice != 1 && choice != 2) {
-                    System.out.println("Invalid input. Please enter 1 or 2.");
-                    choice = keyboard.nextInt();
-                }
-                if (choice == 1) {
-                    donatingForm(donor);
-                    programRun = false;
-                } else if (choice == 2) {
-                    menu(choice, donor);
-                    programRun = false;
-                }
-            } catch (InputMismatchException ex) {
-                System.out.println("Invalid input. Please enter an integer.");
-                keyboard.next();
+        
+        donate = input.nextLine();
+
+        try {
+            System.out.println("Enter Quantity: ");
+            qty = input.nextInt();
+        } catch (InputMismatchException ex) {
+            System.out.println("Invalid input. Please enter an integer.");
+        }
+
+        if (isExist == itemData.contains(donate)) {
+            System.out.println("Item is neded,Donation Item successfully added. Thank you!");
+
+            aid.setAid(donate);
+            aid.setQuantity(qty);
+        } else
+            System.out.println("We dont need the item,sorry,please enter another item");
+        donatingForm(donor);
+        input.close();
+        System.out.println();
+
+    } catch (Exception ex) {
+        System.out.print(ex.getMessage());
+    }
+    System.out.println();
+    boolean programRun = true;
+    do {
+        try {
+            Scanner input = new Scanner(System.in);
+
+            System.out.println("Do You Want To Donate Another Item? :");
+            System.out.println("(1) Yes");
+            System.out.println("(2) No");
+
+            int choice = input.nextInt();
+            while (choice != 1 && choice != 2) {
+                System.out.println("Invalid input. Please enter 1 or 2.");
+                choice = input.nextInt();
             }
-        } while (programRun == true);
-        keyboard.close();
+            if (choice == 1) {
+                donatingForm(donor);
+                programRun = false;
+            } else if (choice == 2) {
+                menu(choice, donor);
+                programRun = false;
+            }
+            input.close();
+        } catch (InputMismatchException ex) {
+            System.out.println("Invalid input. Please enter an integer.");
+        }
+    } while (programRun == true);
     }
 
     private static void viewPersonalDonations(Donor donor) {
-        System.out.println("What have I donated?");
-        System.out.println(donor.getName());
+    System.out.println("What have I donated?");
+    System.out.println(donor.getName());
 
     }
 
     private static void viewNGOrequests() {
-        System.out.println("What are NGOs requesting?");
+    System.out.println("What are NGOs requesting?");
     }
 
 }
