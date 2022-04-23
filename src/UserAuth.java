@@ -1,23 +1,15 @@
-package main;
+package src;
 
 import java.io.IOException;
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import roles.Account;
-import roles.Donor;
-import roles.NGO;
 
 public class UserAuth {
 
@@ -73,27 +65,28 @@ public class UserAuth {
     }
 
     public static int checkLogin(String username, String password, Donor donor, NGO ngo, int type) throws IOException {
-        ArrayList<String> loginCreds = readLoginCredentials();
+        ArrayList<String> userData = readUserData();
+        System.out.print(userData);
         boolean loginValid = false;
         do {
-            for (int i = 0; i < loginCreds.size(); i++) {
-                if (loginCreds.get(i).equals(username) && loginCreds.get(i + 1).equals(password)) {
-                    if (loginCreds.get(i).equals(username) && checkUserType(username) == 0) {
+            for (int i = 0; i < userData.size(); i++) {
+                if (userData.get(i).equals(username) && userData.get(i + 1).equals(password)) {
+                    if (userData.get(i).equals(username) && userData.get(i + 2).equals("0")) {
                         donor.setUsername(username);
                         donor.setPassword(password);
-                        donor.setName(loginCreds.get(i + 2));
-                        donor.setPhone(loginCreds.get(i + 3));
+                        donor.setName(userData.get(i + 3));
+                        donor.setPhone(userData.get(i + 4));
                         type = 0;
-                    } else if (loginCreds.get(i).equals(username) && checkUserType(username) == 1) {
+                    } else if (userData.get(i).equals(username) && userData.get(i + 2).equals("1")) {
                         ngo.setUsername(username);
                         ngo.setPassword(password);
-                        ngo.setNGO(loginCreds.get(i + 2));
-                        ngo.setManpower(Integer.parseInt(loginCreds.get(i + 3)));
+                        ngo.setNGO(userData.get(i + 3));
+                        ngo.setManpower(Integer.parseInt(userData.get(i + 4)));
                         type = 1;
                     }
                     loginValid = true;
                     break;
-                } else if (!loginCreds.get(i).equals(username) && !loginCreds.get(i + 1).equals(password)) {
+                } else if (!userData.get(i).equals(username) && !userData.get(i + 1).equals(password)) {
                     loginValid = false;
                 }
             }
@@ -110,60 +103,19 @@ public class UserAuth {
         return type;
     }
 
-    public static int checkUserType(String username) throws IOException {
-        ArrayList<String> userTypes = readUserTypes();
-        int userType = 0;
-        for (int i = 0; i < userTypes.size(); i++) {
-            if (userTypes.get(i).equals(username)) {
-                userType = Integer.parseInt(userTypes.get(i + 1));
-                break;
-            }
+    private static ArrayList<String> readUserData() throws IOException {
+        ArrayList<String> userData = new ArrayList<>();
+        // read users.csv into a list of lines.
+        List<String> users = Files.readAllLines(Paths.get("src/users.csv"));
+        for (int i = 1; i < users.size(); i++) { // init at 1 to ignore column title
+            String[] items = users.get(i).split(","); // split line by comma
+            userData.add(items[0]); // username
+            userData.add(items[1]); // password
+            userData.add(items[2]); // usertype donor(0) OR ngo(1)
+            userData.add(items[3]); // name/ngo
+            userData.add(items[4]); // phone/manpower
         }
-        return userType;
-    }
-
-    private static ArrayList<String> readUserTypes() throws IOException {
-        ArrayList<String> userTypes = new ArrayList<>();
-        // read donors.csv into a list of lines.
-        List<String> donors = Files.readAllLines(Paths.get("userdata/donors.csv"));
-        for (int i = 1; i < donors.size(); i++) { // init at 1 to ignore column title
-            String[] items = donors.get(i).split(","); // split a line by comma
-            userTypes.add(items[0]); // username
-            userTypes.add(items[4]); // usertype (1 = NGO, 0 = Donor)
-        }
-        // read ngos.csv into a list of lines.
-        List<String> ngos = Files.readAllLines(Paths.get("userdata/ngos.csv"));
-        for (int i = 1; i < ngos.size(); i++) {
-            String[] items = ngos.get(i).split(",");
-            userTypes.add(items[0]);
-            userTypes.add(items[4]);
-        }
-        return userTypes;
-    }
-
-    private static ArrayList<String> readLoginCredentials() throws IOException {
-        ArrayList<String> loginCreds = new ArrayList<>();
-        // read donors.csv into a list of lines.
-        List<String> donors = Files.readAllLines(Paths.get("userdata/donors.csv"));
-        for (int i = 1; i < donors.size(); i++) { // init at 1 to ignore column title
-            String[] items = donors.get(i).split(","); // split line by comma
-            loginCreds.add(items[0]); // username
-            loginCreds.add(items[1]); // password
-            loginCreds.add(items[2]); // name
-            loginCreds.add(items[3]); // phone
-            loginCreds.add(items[4]); // donor(0) OR ngo(1)
-        }
-        // read ngos.csv into a list of lines.
-        List<String> ngos = Files.readAllLines(Paths.get("userdata/ngos.csv"));
-        for (int i = 1; i < ngos.size(); i++) {
-            String[] items = ngos.get(i).split(",");
-            loginCreds.add(items[0]); // username
-            loginCreds.add(items[1]); // password
-            loginCreds.add(items[2]); // ngo
-            loginCreds.add(items[3]); // manpower
-            loginCreds.add(items[4]); // donor(0) OR ngo(1)
-        }
-        return loginCreds;
+        return userData;
     }
 
     private static void createAccount() {
@@ -195,28 +147,25 @@ public class UserAuth {
 
     private static void donorRegister() {
         try {
-            Donor d = new Donor();
-            OutputStream output = new BufferedOutputStream(new FileOutputStream("userdata/donors.csv", true));
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
             AidSystem.displayHeader("Login Credentials");
             System.out.print("Enter a username: ");
             String username = input.next();
-            checkUsername(username, d);
+            checkUsername(username);
             System.out.print("Enter a password: ");
-            d.setPassword(input.next());
+            String password = input.next();
             AidSystem.displayHeader("Personal Details");
             System.out.print("Enter your name: ");
             String name = input.next();
-            d.setName(name);
             System.out.print("Enter your phone number (E.g. 012-3456789): ");
             String phone = input.next();
-            checkPhone(phone, d);
-            writer.write(d.getUsername() + "," + d.getPassword() + "," + d.getName() + "," + d.getPhone() + ",0");
-            writer.newLine();
+            checkPhone(phone);
+
+            StringBuilder sb = new StringBuilder();
+            sb.append(username + "," + password + "," + 0 + "," + name + "," + phone + "\n");
+            Files.write(Paths.get("src/users.csv"), sb.toString().getBytes(), StandardOpenOption.APPEND);
+
             System.out.println("New Donor account successfully created. Happy Donating!");
             System.out.println("Please login with your new account to continue using the app.");
-            writer.close();
-            output.close();
         } catch (Exception ex) {
             System.out.print(ex.getMessage());
         }
@@ -224,26 +173,24 @@ public class UserAuth {
 
     private static void ngoRegister() {
         try {
-            NGO n = new NGO();
-            OutputStream output = new BufferedOutputStream(new FileOutputStream("userdata/ngos.csv", true));
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
-            System.out.println("--- Login Credentials --- ");
+            AidSystem.displayHeader("Login Credentials");
             System.out.print("Enter a username: ");
-            checkUsername(input.next(), n);
-            // n.setUsername(input.next());
+            String username = input.next();
+            checkUsername(username);
             System.out.print("Enter a password: ");
-            n.setPassword(input.next());
-            System.out.println("--- Personal Details --- ");
+            String password = input.next();
+            AidSystem.displayHeader("Personal Details");
             System.out.print("Enter your NGO's initials: ");
-            n.setNGO(input.next());
+            String ngoname = input.next();
             System.out.print("Enter your NGO's manpower number: ");
-            n.setManpower(input.nextInt());
-            writer.write(n.getUsername() + "," + n.getPassword() + "," + n.getNGO() + "," + n.getManpower() + ",1");
-            writer.newLine();
+            int manpower = input.nextInt();
+
+            StringBuilder sb = new StringBuilder();
+            sb.append(username + "," + password + "," + 1 + "," + ngoname + "," + manpower + "\n");
+            Files.write(Paths.get("src/users.csv"), sb.toString().getBytes(), StandardOpenOption.APPEND);
+
             System.out.println("New NGO account successfully created. You can start requesting!");
             System.out.println("Please login with your new account to continue using the app.");
-            writer.close();
-            output.close();
         } catch (Exception ex) {
             System.out.print(ex.getMessage());
         }
@@ -255,17 +202,17 @@ public class UserAuth {
         return (m.matches()); // returns boolean value, true means accepted.
     }
 
-    private static void checkPhone(String phonenum, Donor d) {
+    private static void checkPhone(String phonenum) {
         if (phoneValid(phonenum)) {
-            d.setPhone(phonenum);
+            System.out.println("Phone number is good to go!");
         } else {
             System.out.println("Invalid phone number!");
             System.out.print("Re-enter your phone number (E.g. 012-3456789): ");
-            checkPhone(input.next(), d);
+            checkPhone(input.next());
         }
     }
 
-    private static void checkUsername(String username, Account role) throws IOException {
+    private static void checkUsername(String username) throws IOException {
         // Check uniqueness of username.
         ArrayList<String> users = readUsernames();
         boolean takenUser = false;
@@ -280,30 +227,23 @@ public class UserAuth {
         if (takenUser) {
             System.out.println("Username is already taken!");
             System.out.print("Enter a new username: ");
-            checkUsername(input.next(), role);
+            checkUsername(input.next());
         } else {
             System.out.println("Username is good to go!");
-            role.setUsername(username);
         }
     }
 
     private static ArrayList<String> readUsernames() throws IOException {
-        ArrayList<String> users = new ArrayList<>();
-        // read donors.csv into a list of lines.
-        List<String> donors = Files.readAllLines(Paths.get("userdata/donors.csv"));
+        ArrayList<String> usernames = new ArrayList<>();
+        // read users.csv into a list of lines.
+        List<String> users = Files.readAllLines(Paths.get("src/users.csv"));
         // init at 1 to ignore column name
-        for (int i = 1; i < donors.size(); i++) {
+        for (int i = 1; i < users.size(); i++) {
             // split a line by comma
-            String[] items = donors.get(i).split(",");
-            // items[0] is username
-            users.add(items[0]);
+            String[] items = users.get(i).split(",");
+            // users[0] is username
+            usernames.add(items[0]);
         }
-        // read ngos.csv into a list of lines.
-        List<String> ngos = Files.readAllLines(Paths.get("userdata/ngos.csv"));
-        for (int i = 1; i < ngos.size(); i++) {
-            String[] items = ngos.get(i).split(",");
-            users.add(items[0]);
-        }
-        return users;
+        return usernames;
     }
 }

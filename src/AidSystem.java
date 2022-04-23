@@ -1,45 +1,28 @@
-package main;
+package src;
 
 // main program is run here
-
 import java.io.IOException;
-import java.util.Queue;
-
-import javax.xml.namespace.QName;
-
-import roles.Aid;
-import roles.Donor;
-import roles.NGO;
-import roles.Request;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 // Main program. Run this.
 public class AidSystem {
     public static void main(String[] args) throws IOException {
+        Scanner input = new Scanner(System.in);
         Donor userD = new Donor();
         NGO userN = new NGO();
         int userType = -1;
-        int choice = 0;
 
         userType = UserAuth.welcomePage(userD, userN, userType);
+        ArrayList<Request> requestList = Request.readRequestFile();
+        ArrayList<AidsCompleted> aidsCompletedList = AidsCompleted.readAidsCompletedFile();
+
         if (userType == 0) {
-
-            Queue<Aid> aidList = Aid.readAidFile();
-            Queue<Request> requestList = Request.readRequestFile();
-
-            for (Aid s : aidList) {
-                System.out.println(s);
-            }
-            for (Request s : requestList) {
-                System.out.println(s);
-            }
-
-            Donor.menu(choice, userD);
-            System.out.println(choice);
-
+            System.out.println("Hello Donor");
+            Donor.menu(userD, requestList, aidsCompletedList, input);
         } else if (userType == 1) { // userType == 1
-            do {
-                choice = NGO.menu(userN);
-            } while (choice != 5);
+            System.out.println("Hello NGO");
+            NGO.menu(userN, requestList, aidsCompletedList, input);
         }
     }
 
