@@ -18,10 +18,8 @@ public class AidSystem {
         ArrayList<AidsCompleted> aidsCompletedList = AidsCompleted.readAidsCompletedFile();
 
         if (userType == 0) {
-            System.out.println("Hello Donor");
             Donor.menu(userD, requestList, aidsCompletedList, input);
         } else if (userType == 1) { // userType == 1
-            System.out.println("Hello NGO");
             NGO.menu(userN, requestList, aidsCompletedList, input);
         }
     }

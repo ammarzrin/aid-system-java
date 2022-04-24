@@ -123,11 +123,10 @@ public class Request extends NGO {
 
     public static ArrayList<Request> readRequestFile() throws IOException {
         ArrayList<Request> requestList = new ArrayList<Request>();
-
         List<String> requests = Files.readAllLines(Paths.get("src/requests.csv"));
-        System.out.println("Array:");
-        for (String s : requests)
-            System.out.println(s);
+        // System.out.println("Array:");
+        // for (String s : requests)
+        // System.out.println(s);
         for (int i = 0; i < requests.size(); i++) {
             String[] items = requests.get(i).split(",");
             requestList.add(new Request(items[0], Integer.parseInt(items[1]), items[2], Integer.parseInt(items[3])));

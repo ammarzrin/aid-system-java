@@ -84,9 +84,9 @@ public class AidsCompleted {
     public static ArrayList<AidsCompleted> readAidsCompletedFile() throws IOException {
         ArrayList<AidsCompleted> aidsCompletedList = new ArrayList<AidsCompleted>();
         List<String> completed = Files.readAllLines(Paths.get("src/aidsCompleted.csv"));
-        System.out.println("Array:");
-        for (String s : completed)
-            System.out.println(s);
+        // System.out.println("Array:");
+        // for (String s : completed)
+        // System.out.println(s);
         for (int i = 0; i < completed.size(); i++) {
             String[] items = completed.get(i).split(",");
             aidsCompletedList.add(new AidsCompleted(items[0], items[1], items[2], items[3], Integer.parseInt(items[4]),
