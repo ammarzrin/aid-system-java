@@ -1,10 +1,6 @@
 package src;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Aid extends Donor {
 
@@ -117,26 +113,27 @@ public class Aid extends Donor {
         }
     }
 
-    public static ArrayList<Aid> readAidFile() throws IOException {
-        ArrayList<Aid> aidList = new ArrayList<Aid>();
-        List<String> aids = Files.readAllLines(Paths.get("src/aids.csv"));
-        System.out.println("Array:");
-        for (String s : aids)
-            System.out.println(s);
-        for (int i = 0; i < aids.size(); i++) {
-            String[] items = aids.get(i).split(",");
-            aidList.add(new Aid(items[0], items[1], items[2], Integer.parseInt(items[3])));
-        }
-        return aidList;
-    }
+    // public static ArrayList<Aid> readAidFile() throws IOException {
+    // ArrayList<Aid> aidList = new ArrayList<Aid>();
+    // List<String> aids = Files.readAllLines(Paths.get("src/aids.csv"));
+    // System.out.println("Array:");
+    // for (String s : aids)
+    // System.out.println(s);
+    // for (int i = 0; i < aids.size(); i++) {
+    // String[] items = aids.get(i).split(",");
+    // aidList.add(new Aid(items[0], items[1], items[2],
+    // Integer.parseInt(items[3])));
+    // }
+    // return aidList;
+    // }
 
-    public static void writeAidFile(ArrayList<Aid> aid)
-            throws IOException {
-        // read students.csv into a list of lines.
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < aid.size(); i++)
-            sb.append(aid.get(i).toCSVString() + "\n");
-        Files.write(Paths.get("src/aids.csv"), sb.toString().getBytes());
-    }
+    // public static void writeAidFile(ArrayList<Aid> aid)
+    // throws IOException {
+    // // read students.csv into a list of lines.
+    // StringBuilder sb = new StringBuilder();
+    // for (int i = 0; i < aid.size(); i++)
+    // sb.append(aid.get(i).toCSVString() + "\n");
+    // Files.write(Paths.get("src/aids.csv"), sb.toString().getBytes());
+    // }
 
 }

@@ -97,7 +97,6 @@ public class AidsCompleted {
 
     public static void writeAidsCompletedFile(ArrayList<AidsCompleted> aid)
             throws IOException {
-        // read students.csv into a list of lines.
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < aid.size(); i++)
             sb.append(aid.get(i).toCSVString() + "\n");

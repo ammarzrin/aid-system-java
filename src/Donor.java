@@ -138,6 +138,7 @@ public class Donor extends Account {
             itemData.add("sardine");
             itemData.add("biscuit");
 
+            AidSystem.displayHeader("Donating Form");
             System.out.println("\nList of acceptable donations:\n - Rice\n - Flour\n - Sugar\n - Sardine\n - Biscuit");
             System.out.print("\nEnter an item you wish to donate --> ");
             donate = input.next().toLowerCase();
