@@ -1,0 +1,1 @@
+typeSearchIndex = [{"p":"src","l":"Account"},{"p":"src","l":"Aid"},{"p":"src","l":"AidsCompleted"},{"p":"src","l":"AidSystem"},{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"src","l":"DC"},{"p":"src","l":"Donor"},{"p":"src","l":"NGO"},{"p":"src","l":"Request"},{"p":"src","l":"UserAuth"}];updateSearchResults();
