@@ -1,11 +1,12 @@
 package src;
 
-// main program is run here
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-// Main program. Run this.
+/**
+ * The main file. Run this to start the program.
+ */
 public class AidSystem {
     public static void main(String[] args) throws IOException {
         Scanner input = new Scanner(System.in);
@@ -24,6 +25,11 @@ public class AidSystem {
         }
     }
 
+    /**
+     * Creates a frame for the current page's header. UI/UX purposes.
+     * 
+     * @param message The header title.
+     */
     public static void displayHeader(String message) {
         System.out.println();
         int width = message.length() + 2;

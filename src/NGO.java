@@ -39,7 +39,7 @@ public class NGO extends Account {
         int choice;
 
         do {
-            displayHeader("NGO Main Menu");
+            AidSystem.displayHeader("NGO Main Menu");
             System.out.println("Hello, " + ngo.getNGO() + "!");
             System.out.println("Select an option:");
             System.out.println("1. Make a Request!");
@@ -61,7 +61,7 @@ public class NGO extends Account {
                     viewReceivedAids(ngo, requestList, aidsCompletedList, input);
                     break;
                 case 4:
-                    viewAllDonations();
+                    viewAllDonations(aidsCompletedList);
                     break;
                 case 5:
                     System.out.println("Exiting the program...");

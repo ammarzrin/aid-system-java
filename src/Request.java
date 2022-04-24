@@ -47,9 +47,8 @@ public class Request extends NGO {
     }
 
     public String toString() {
-        return "ngoName :  name = " + getNGO() + ", Manpower = " + getManpower() + ", aid = " + getAid()
-                + ", quantity = "
-                + getQuantity();
+        return String.format("%5s\t%8s\t%10s\t8d",
+                getNGO(), getManpower(), getAid(), getQuantity());
     }
 
     public String toCSVString() {

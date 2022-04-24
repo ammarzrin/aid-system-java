@@ -71,9 +71,9 @@ public class AidsCompleted {
     }
 
     public String toString() {
-        return getDonor() + "   " + getPhone() + "   " + getAid() + "   "
-                + getngoName() + "   "
-                + getQuantity() + "   " + getManpower() + "  " + getStatus();
+        // donor, phone, item, quantity, to ngo, manpower, status
+        return String.format("%10s\t%12s\t%10s\t%8d\t%7s\t%8s\t%10s",
+                getDonor(), getPhone(), getAid(), getQuantity(), getngoName(), getManpower(), getStatus());
     }
 
     public String toCSVString() {
