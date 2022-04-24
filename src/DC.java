@@ -9,10 +9,10 @@ import java.util.Queue;
 import java.util.Scanner;
 
 /**
- * 
+ * Main function is stored here. Start the program here to demonstrate
+ * collection system.
  */
 class TestDC {
-
     public static void main(String[] args) throws IOException {
         Scanner input = new Scanner(System.in);
         int choice;
@@ -28,6 +28,7 @@ class TestDC {
 
         do {
             AidSystem.displayHeader("DC Main Menu");
+            System.out.println("\nList of acceptable donations:\n - Rice\n - Flour\n - Sugar\n - Sardine\n - Biscuit");
             System.out.println("Select an option:");
             System.out.println("1. Match donations one to one");
             System.out.println("2. Match donations one to many ");
@@ -44,10 +45,14 @@ class TestDC {
 }
 
 /**
- * 
+ * This class is the comparator implementation for AidPriority class.
  */
 class AidComparator implements Comparator<AidPriority> {
 
+    /**
+     * Compares manpower number between two NGOs for PriorityQueue implementation
+     * for Collection system.
+     */
     public int compare(AidPriority a1, AidPriority a2) {
 
         if (a1.manpower < a2.manpower)
@@ -60,7 +65,7 @@ class AidComparator implements Comparator<AidPriority> {
 }
 
 /**
- * 
+ * This class is a constructor for the queue system.
  */
 class AidPriority {
     public String ngo;
@@ -68,15 +73,24 @@ class AidPriority {
 
     // A constructor for aid priority
     public AidPriority(String ngo, int manpower) {
-
         this.ngo = ngo;
         this.manpower = manpower;
     }
 
+    /**
+     * Gets NGO name.
+     * 
+     * @return Returns NGO's initials.
+     */
     public String getNgo() {
         return ngo;
     }
 
+    /**
+     * Gets manpower number of the NGO.
+     * 
+     * @return Returns NGO's manpower number.
+     */
     public int getManpower() {
         return manpower;
     }
@@ -84,7 +98,8 @@ class AidPriority {
 }
 
 /**
- * 
+ * Contains everything in DC including the menu, actions and methods for both
+ * FIFO queue and PriorityQueue
  */
 public class DC {
     public static void dcActions(int choice, ArrayList<AidsCompleted> aidsCompletedList, Scanner input,
