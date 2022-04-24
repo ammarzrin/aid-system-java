@@ -2,56 +2,90 @@ package src;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Scanner;
 
+/**
+ * 
+ */
 class TestDC {
+
     public static void main(String[] args) throws IOException {
         Scanner input = new Scanner(System.in);
         int choice;
         ArrayList<String> itemData = new ArrayList<>();
 
-        itemData.add("apple");
-        itemData.add("lemon");
-        itemData.add("orange");
         itemData.add("rice");
-        itemData.add("watermelon");
+        itemData.add("flour");
+        itemData.add("sugar");
+        itemData.add("sardine");
+        itemData.add("biscuit");
 
         ArrayList<AidsCompleted> aidsCompletedList = AidsCompleted.readAidsCompletedFile();
 
         do {
-
-            displayHeader("DC Main Menu");
-
+            AidSystem.displayHeader("DC Main Menu");
             System.out.println("Select an option:");
-            System.out.println("1. Match donation one to one");
+            System.out.println("1. Match donations one to one");
             System.out.println("2. Match donations one to many ");
             System.out.println("3. Match donations many to one");
             System.out.println("4. Match donations many to many");
             System.out.println("5. Queue donations");
             System.out.println("6. Exit Program");
 
-            // choice = getMenuInput();
             choice = input.nextInt();
             DC.dcActions(choice, aidsCompletedList, input, itemData);
 
         } while (choice != 6);
     }
+}
 
-    public static void displayHeader(String message) {
-        System.out.println();
-        int width = message.length() + 2;
-        StringBuilder sb = new StringBuilder();
-        sb.append("+");
-        for (int i = 0; i < width; ++i) {
-            sb.append("-");
-        }
-        sb.append("+");
-        System.out.println(sb.toString());
-        System.out.println("| " + message + " |");
-        System.out.println(sb.toString());
+/**
+ * 
+ */
+class AidComparator implements Comparator<AidPriority> {
+
+    public int compare(AidPriority a1, AidPriority a2) {
+
+        if (a1.manpower < a2.manpower)
+            return 1;
+        else if (a1.manpower > a2.manpower)
+            return -1;
+        else
+            return 0;
     }
 }
 
+/**
+ * 
+ */
+class AidPriority {
+    public String ngo;
+    public int manpower;
+
+    // A constructor for aid priority
+    public AidPriority(String ngo, int manpower) {
+
+        this.ngo = ngo;
+        this.manpower = manpower;
+    }
+
+    public String getNgo() {
+        return ngo;
+    }
+
+    public int getManpower() {
+        return manpower;
+    }
+
+}
+
+/**
+ * 
+ */
 public class DC {
     public static void dcActions(int choice, ArrayList<AidsCompleted> aidsCompletedList, Scanner input,
             ArrayList<String> ItemData) {
@@ -155,7 +189,7 @@ public class DC {
         int choice;
         do {
 
-            TestDC.displayHeader("Queue Donation");
+            AidSystem.displayHeader("Queue Donation");
 
             System.out.println("Select an option:");
             System.out.println("1. FIFO Queue");
@@ -173,21 +207,360 @@ public class DC {
 
         switch (choice) {
             case 1:
-                queueFIFO(aidsCompletedList, input);
+                PriorityFIFO.queueFIFO(aidsCompletedList, input);
                 break;
             case 2:
-                queuePriority(aidsCompletedList, input);
+                PriorityQ.queuePriority(aidsCompletedList, input);
                 break;
             case 3:
                 break;
         }
     }
 
-    public static void queueFIFO(ArrayList<AidsCompleted> aidsCompletedList, Scanner input) {
-        System.out.print("hi");
+    static class PriorityQ {
+
+        public PriorityQ() {
+        }
+
+        public static void queuePriority(ArrayList<AidsCompleted> aidsCompletedList, Scanner input) {
+
+            PriorityQueue<AidPriority> aidList = new PriorityQueue<AidPriority>(11, new AidComparator());
+
+            int choice;
+            String Ngo = "";
+
+            AidSystem.displayHeader("Queue Donation");
+
+            do {
+                System.out.println("Select an option:");
+                System.out.println("1. Enqueue an NGO");
+                System.out.println("2. Dequeue an NGO");
+                System.out.println("3. exit");
+
+                System.out.print("[ ");
+
+                for (AidPriority s : aidList) {
+                    System.out.print(s.ngo + " ");
+                }
+
+                System.out.println(" ] ");
+
+                System.out.print("Command >");
+                // choice = getMenuInput();
+
+                choice = input.nextInt();
+
+                priorityActions(choice, Ngo, aidsCompletedList, input, aidList);
+
+            } while (choice != 3);
+
+        }
+
+        public static void priorityActions(int choice, String Ngo, ArrayList<AidsCompleted> aidsCompletedList,
+                Scanner input, PriorityQueue<AidPriority> aidList) {
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Which Ngo?");
+
+                    Ngo = input.next();
+                    // if there is ngo name like that
+                    // if ngo is already in the queue
+                    Enqueue(Ngo, aidsCompletedList, input, aidList);
+                    break;
+                case 2:
+
+                    Dequeue(Ngo, aidsCompletedList, input, aidList);
+                    break;
+                case 3:
+                    break;
+            }
+        }
+
+        public static void Enqueue(String Ngo, ArrayList<AidsCompleted> aidsCompletedList, Scanner input,
+                PriorityQueue<AidPriority> aidList) {
+
+            boolean noNGO = false;
+            String errorMessage = "";
+            int manpower;
+
+            if (aidList.isEmpty()) {
+                System.out.println("masuk kat empty");
+                checkAvailable(Ngo, aidsCompletedList, errorMessage, noNGO);
+            } else {
+                checkAvailableAid(Ngo, aidList, errorMessage, noNGO);
+                checkAvailable(Ngo, aidsCompletedList, errorMessage, noNGO);
+            }
+
+            if (!noNGO) {
+                manpower = checkHighestManpower(Ngo, aidsCompletedList);
+
+                System.out.print(manpower);
+                AidPriority aid = new AidPriority(Ngo, manpower);
+                aidList.add(aid);
+
+            } else {
+                System.out.println(errorMessage + ". Please try again");
+            }
+
+        }
+
+        public static int checkHighestManpower(String Ngo, ArrayList<AidsCompleted> aidsCompletedList) {
+
+            int manpower = 0;
+
+            for (AidsCompleted s : aidsCompletedList) {
+                if (s.getngoName().equals(Ngo) && s.getStatus().equals("Reserved")
+                        && Integer.parseInt(s.getManpower()) > manpower) {
+                    manpower = Integer.parseInt(s.getManpower());
+                }
+            }
+
+            return manpower;
+        }
+
+        public static void Dequeue(String Ngo, ArrayList<AidsCompleted> aidsCompletedList, Scanner input,
+                PriorityQueue<AidPriority> aidList) {
+
+            boolean noNGO = false;
+            String errorMessage = "";
+
+            if (aidList.isEmpty()) {
+                noNGO = false;
+            } else {
+                checkNotAvailableAid(Ngo, aidList, errorMessage, noNGO);
+            }
+
+            if (!noNGO) {
+
+                Ngo = aidList.peek().getNgo();
+                aidList.remove();
+                setCompleted(Ngo, aidsCompletedList);
+
+                try {
+                    AidsCompleted.writeAidsCompletedFile(aidsCompletedList);
+                } catch (IOException e) {
+                    System.out.println("file cannot write");
+                }
+
+            } else {
+                System.out.println(errorMessage + ". Please try again");
+            }
+
+        }
+
+        public static void setCompleted(String Ngo, ArrayList<AidsCompleted> aidsCompletedList) {
+            for (AidsCompleted s : aidsCompletedList) {
+                if (s.getngoName().equals(Ngo) && s.getStatus().equals("Reserved")) {
+                    s.setStatus("Completed");
+                }
+            }
+        }
+
+        public static void checkNotAvailableAid(String Ngo, PriorityQueue<AidPriority> aidList, String errorMessage,
+                boolean noNGO) {
+
+            for (AidPriority s : aidList) {
+                if (s.getNgo().equals(Ngo)) {
+                    noNGO = true;
+                    break;
+                } else {
+                    noNGO = false;
+                }
+            }
+            errorMessage = "sorry, that ngo is not in queue";
+        }
+
+        public static void checkAvailableAid(String Ngo, PriorityQueue<AidPriority> aidList, String errormessage,
+                boolean noNGO) {
+
+            for (AidPriority s : aidList) {
+                if (s.getNgo().equals(Ngo)) {
+                    noNGO = false;
+                    break;
+                } else {
+                    noNGO = true;
+                }
+            }
+            errormessage = "sorry, ngo is already in queue";
+        }
+
+        public static void checkAvailable(String Ngo, ArrayList<AidsCompleted> aidsCompletedList, String errormessage,
+                boolean noNGO) {
+
+            for (AidsCompleted s : aidsCompletedList) {
+                if (s.getngoName().equals(Ngo)) {
+                    System.out.println("masuk kat ngo");
+                    noNGO = true;
+                    break;
+                }
+            }
+            errormessage = "sorry, no NGO found";
+        }
     }
 
-    public static void queuePriority(ArrayList<AidsCompleted> aidsCompletedList, Scanner input) {
-        System.out.print("hello");
+    static class PriorityFIFO {
+
+        public PriorityFIFO() {
+        }
+
+        public static void queueFIFO(ArrayList<AidsCompleted> aidsCompletedList, Scanner input) {
+
+            Queue<AidPriority> aidList = new LinkedList<AidPriority>();
+            // listReserved(reservedList, aidsCompletedList);
+
+            int choice;
+            String Ngo = "";
+
+            AidSystem.displayHeader("Queue Donation");
+
+            do {
+                System.out.println("Select an option:");
+                System.out.println("1. Enqueue an NGO");
+                System.out.println("2. Dequeue an NGO");
+                System.out.println("3. exit");
+
+                System.out.print("[ ");
+
+                for (AidPriority s : aidList) {
+                    System.out.print(s.ngo + " ");
+                }
+
+                System.out.println(" ] ");
+
+                System.out.print("Command >");
+                // choice = getMenuInput();
+
+                choice = input.nextInt();
+
+                priorityActions(choice, Ngo, aidsCompletedList, input, aidList);
+
+            } while (choice != 3);
+        }
+
+        public static void priorityActions(int choice, String Ngo, ArrayList<AidsCompleted> aidsCompletedList,
+                Scanner input, Queue<AidPriority> aidList) {
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Which Ngo?");
+
+                    Ngo = input.next();
+                    // if there is ngo name like that
+                    // if ngo is already in the queue
+                    Enqueue(Ngo, aidsCompletedList, input, aidList);
+                    break;
+                case 2:
+
+                    Dequeue(Ngo, aidsCompletedList, input, aidList);
+                    break;
+                case 3:
+                    break;
+            }
+        }
+
+        public static void Enqueue(String Ngo, ArrayList<AidsCompleted> aidsCompletedList, Scanner input,
+                Queue<AidPriority> aidList) {
+
+            boolean noNGO = false;
+            String errorMessage = "";
+            int manpower = 0;
+
+            if (aidList.isEmpty()) {
+                System.out.println("masuk kat empty");
+                checkAvailable(Ngo, aidsCompletedList, errorMessage, noNGO);
+            } else {
+                checkAvailableAid(Ngo, aidList, errorMessage, noNGO);
+                checkAvailable(Ngo, aidsCompletedList, errorMessage, noNGO);
+            }
+
+            if (!noNGO) {
+
+                AidPriority aid = new AidPriority(Ngo, manpower);
+                aidList.add(aid);
+            } else {
+                System.out.println(errorMessage + ". Please try again");
+            }
+
+        }
+
+        public static void setCompleted(String Ngo, ArrayList<AidsCompleted> aidsCompletedList) {
+            for (AidsCompleted s : aidsCompletedList) {
+                if (s.getngoName().equals(Ngo) && s.getStatus().equals("Reserved")) {
+                    s.setStatus("Completed");
+                }
+            }
+        }
+
+        public static void checkNotAvailableAid(String Ngo, Queue<AidPriority> aidList, String errorMessage,
+                boolean noNGO) {
+
+            for (AidPriority s : aidList) {
+                if (s.getNgo().equals(Ngo)) {
+                    noNGO = true;
+                    break;
+                } else {
+                    noNGO = false;
+                }
+            }
+            errorMessage = "sorry, that ngo is not in queue";
+        }
+
+        public static void checkAvailableAid(String Ngo, Queue<AidPriority> aidList, String errormessage,
+                boolean noNGO) {
+
+            for (AidPriority s : aidList) {
+                if (s.getNgo().equals(Ngo)) {
+                    noNGO = false;
+                    break;
+                } else {
+                    noNGO = true;
+                }
+            }
+            errormessage = "sorry, ngo is already in queue";
+        }
+
+        public static void checkAvailable(String Ngo, ArrayList<AidsCompleted> aidsCompletedList, String errormessage,
+                boolean noNGO) {
+
+            for (AidsCompleted s : aidsCompletedList) {
+                if (s.getngoName().equals(Ngo)) {
+                    System.out.println("masuk kat ngo");
+                    noNGO = true;
+                    break;
+                }
+            }
+            errormessage = "sorry, no NGO found";
+        }
+
+        public static void Dequeue(String Ngo, ArrayList<AidsCompleted> aidsCompletedList, Scanner input,
+                Queue<AidPriority> aidList) {
+
+            boolean noNGO = false;
+            String errorMessage = "";
+
+            if (aidList.isEmpty()) {
+                noNGO = false;
+            } else {
+                checkNotAvailableAid(Ngo, aidList, errorMessage, noNGO);
+            }
+
+            if (!noNGO) {
+
+                Ngo = aidList.peek().getNgo();
+                aidList.remove();
+                setCompleted(Ngo, aidsCompletedList);
+
+                try {
+                    AidsCompleted.writeAidsCompletedFile(aidsCompletedList);
+                } catch (IOException e) {
+                    System.out.println("file cannot write");
+                }
+
+            } else {
+                System.out.println(errorMessage + ". Please try again");
+            }
+
+        }
     }
 }
